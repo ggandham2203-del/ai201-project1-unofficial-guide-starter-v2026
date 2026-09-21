@@ -1,6 +1,7 @@
 # The Unofficial Guide
 
-<!-- Replace this line with your name and which corpus you picked. -->
+Name: Gayathri Gandham
+Corpus: advice_threads
 
 > **This file is your submission.** Fill it in as you go — most sections get
 > written during the milestone that produces them, not at the end.
@@ -21,26 +22,30 @@
 
 ## What This Does
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
-
-     Milestone 5. -->
+This project builds a question-answering system over a corpus of 23 student advice
+threads. The threads cover topics such as commuting, changing majors, group
+projects, internships, office hours, and other student experiences. The system
+loads the documents, divides them into chunks, retrieves the most relevant
+chunks for a question, and generates an answer using only the retrieved
+information. It also uses a relevance cutoff so that questions outside the
+corpus can be rejected instead of receiving an unsupported answer.
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** One complete thread/document per chunk
+**Overlap:** None
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
+I chose to keep each advice thread as one chunk because the documents are short
+and each thread already groups related replies around one question. The five
+sample chunks showed that the complete thread can be read as a coherent unit,
+without sentences or replies being cut in the middle. I chose no overlap because
+repeating the same thread across chunks would duplicate information and increase
+the number of chunks unnecessarily.
 
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
+The starter chunker produced 26 chunks from the 23 documents using fixed-size
+character windows. My replacement produces 23 chunks, one for each advice
+thread, using `chunker.py::split_documents`.
 
-     Milestone 3. -->
 
 ## Sample Chunks
 
@@ -53,57 +58,116 @@
 
      Milestone 3. -->
 
-**Chunk 1** — source: `` — produced by: ``
+**Chunk 1** — source: `thread_bike_commute.txt#0` — produced by: `chunker.py::split_documents`
 
-```
-```
+```text
+THREAD: Is a bike worth it for a 20 minute walk commute?
 
-**Chunk 2** — source: `` — produced by: ``
+--- reply 1 (14 votes) ---
+Yeah. Cuts an 18 minute walk to about 6. The thing nobody mentions is storage — covered bike parking exists at three buildings and is full by 9am at all three.
 
-```
-```
+--- reply 2 (9 votes) ---
+Counterpoint, I sold mine. Between November and March the paths are either icy or salted and salt destroys a drivetrain in one season.
 
-**Chunk 3** — source: `` — produced by: ``
+--- reply 3 (22 votes) ---
+Both true. I keep a cheap bike for September to November and walk the rest of the year. Total cost was about $120 for the bike and I don't care what happens to it.
 
-```
-```
-
-**Chunk 4** — source: `` — produced by: ``
-
-```
+--- reply 4 (5 votes) ---
+If you do get one, the campus does free registration and it's the only reason I got mine back after it was taken.
 ```
 
-**Chunk 5** — source: `` — produced by: ``
+**Chunk 2** — source: `thread_first_gen.txt#0` — produced by: `chunker.py::split_documents`
 
+```text
+THREAD: Anything specific for first-generation students?
+
+--- reply 1 (33 votes) ---
+The advising office has a specific programme and it is genuinely good, but it is opt-in and badly publicised. Ask for it by name.
+
+--- reply 2 (41 votes) ---
+The thing I'd say: the unwritten rules are the hard part, not the coursework. Ask about the unwritten rules explicitly. People are happy to explain them and nobody volunteers them.
+
+--- reply 3 (16 votes) ---
+Emergency fund for textbooks and travel exists and is not means-tested beyond a short form.
 ```
+
+**Chunk 3** — source: `thread_laptop_specs.txt#0` — produced by: `chunker.py::split_documents`
+
+```text
+THREAD: How much laptop do I actually need for CS courses?
+
+--- reply 1 (31 votes) ---
+Less than the recommended spec page says. 16GB of RAM is the one number worth paying for; everything else you'll never notice.
+
+--- reply 2 (18 votes) ---
+Adding: the lab machines exist and are better than anything you'll buy. For the heavy assignments people just use those.
+
+--- reply 3 (12 votes) ---
+I did two years on an 8GB machine and it was fine until the last project, at which point it very much wasn't. 16 is the answer.
+```
+
+**Chunk 4** — source: `thread_office_hours_etiquette.txt#0` — produced by: `chunker.py::split_documents`
+
+```text
+THREAD: Is it weird to go to office hours with no specific question?
+
+--- reply 1 (44 votes) ---
+No, and this is the single most common thing first years get wrong. 'I'm following the lectures but I don't feel like I understand the shape of it' is a completely normal thing to say.
+
+--- reply 2 (29 votes) ---
+They're usually empty. You are doing the instructor a favour by turning up.
+
+--- reply 3 (18 votes) ---
+If it helps, treat it as a standing appointment. Go every week for a month and it stops feeling like a thing.
+```
+
+**Chunk 5** — source: `thread_professor_email.txt#0` — produced by: `chunker.py::split_documents`
+
+```text
+THREAD: Do professors actually answer email?
+
+--- reply 1 (21 votes) ---
+Varies enormously. General rule I've found: if the syllabus states a response window, it's honoured. If it doesn't, assume 48 hours and don't panic before then.
+
+--- reply 2 (33 votes) ---
+Office hours are dramatically more effective than email for anything that takes more than two sentences to answer. They're also usually empty.
+
+--- reply 3 (15 votes) ---
+Empty office hours is the biggest unused resource here and I say that having wasted a year not going.
 ```
 
 ## Sample Answer
 
-<!-- One complete question and answer, pasted as text, with the source line
-     visible. Milestone 4. -->
-
 **Question:**
+
+When do large employers typically recruit for summer internships?
 
 **Answer:**
 
-```
-```
+Large employers close applications for summer internships in October and
+November for the following summer.
 
-**My relevance cutoff:**
+Source: `thread_internship_timing.txt`
 
-<!-- The number you set in config.py, and how you got there.
+**My relevance cutoff:** 0.6
 
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
-
-     Milestone 4. -->
+I tested five questions covered by the corpus and five questions outside the
+corpus. The five in-corpus questions had best distances from 0.302 to 0.493,
+while the five out-of-corpus questions had best distances from 0.787 to 0.930.
+The gap between the two groups supported keeping the cutoff at 0.6.
 
 | Question | In corpus? | Best distance |
-|---|---|---|
-|  |  |  |
+|---|---|---:|
+| Where is covered bike parking available, and when does it tend to fill up? | Yes | 0.493 |
+| What should a student consider when changing majors in their second year? | Yes | 0.324 |
+| What should students do when a group-project member stops contributing? | Yes | 0.359 |
+| When do large employers typically recruit for summer internships? | Yes | 0.302 |
+| How long should a student generally wait for a professor's email response if the syllabus doesn't specify a response window? | Yes | 0.312 |
+| What is the capital of Mongolia? | No | 0.890 |
+| How do I change the oil in a diesel engine? | No | 0.930 |
+| Who won the 1994 World Cup? | No | 0.787 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.828 |
+| How do I write a for loop in Rust? | No | 0.871 |
 
 ## How I Used AI
 
@@ -116,9 +180,24 @@
 
      Milestone 5. -->
 
-**1.**
+**1. Acceptance criteria**
 
-**2.**
+I used AI to pressure-test the acceptance criteria I drafted for the project.
+The initial criteria included ideas such as checking whether answers contained
+the expected information and whether unsupported questions were rejected. AI
+pointed out where some of these ideas were too vague to test and helped me
+make the targets observable, such as using 4 of 5 questions and specifying
+what should happen for low-confidence retrieval. I kept the actual criteria
+and targets based on my project decisions.
+
+**2. Chunking strategy**
+
+I used AI to review the starter chunks and think through whether the fixed-size
+chunking strategy fit my advice-thread corpus. The starter produced complete
+short threads in many cases, and the corpus naturally organizes information as
+a thread question followed by related replies. Based on that observation, I
+chose to keep each complete thread as one chunk with no overlap rather than
+splitting or duplicating the thread across multiple chunks.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never

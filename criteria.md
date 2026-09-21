@@ -23,8 +23,9 @@ For at least 4 of my 5 test questions, the retrieved chunks include one that
 contains the answer.
 
 **Why this target:**
-<!-- e.g. "One of my questions is about a topic only two documents mention, so
-     I expect that one to be hard." -->
+Because most of my test questions are based on specific information in the
+advice-thread corpus, so I expect the retrieved chunks to contain the answer
+for at least 4 of the 5 questions.
 
 ---
 
@@ -33,8 +34,8 @@ contains the answer.
 Every answer the system produces names at least one source document.
 
 **Why this target:**
-<!-- Why all five and not four? What about your setup makes that achievable —
-     or what would have to go wrong for it not to be? -->
+Because there should be proof that the information in an answer comes from
+the corpus, so the response can be traced back to a source document.
 
 ---
 
@@ -50,48 +51,33 @@ in at least 4 of 5 tries.
      just keep five of them, or the "4 of 5" above has nothing to be 4 of. -->
 
 **Why this target:**
-<!-- What did your distances look like when you set the cutoff in Milestone 4?
-     Was there a clean gap, or did the two groups overlap? -->
+Because questions unrelated to the corpus should not receive unsupported
+answers, while allowing one possible error in the relevance gate.
 
 ---
 
 ## 4. Something about your chunks
 
-<!-- YOU WRITE THIS ONE.
-
-     How would you know if your chunks were the right size? Name something
-     countable or observable.
-
-     Examples of the right shape — don't copy these, they should come from
-     what you actually saw in Milestone 3:
-       - "At least 4 of 5 sampled chunks read as a complete thought, with no
-          sentence cut in half at either end."
-       - "No chunk is shorter than 200 characters, since anything below that
-          in my corpus turned out to be a heading with no content under it." -->
-
-
+At least 4 of the 5 sampled chunks should contain a valid, understandable
+piece of information rather than random or meaningless text.
 
 **Why this target:**
-
+Because the chunks are the information retrieved by the system, so they need
+to contain useful information that can support an answer rather than broken or
+meaningless text.
 
 
 ---
 
 ## 5. Your choice
 
-<!-- YOU WRITE THIS ONE TOO.
-
-     Pick something you actually care about getting right. It could be about
-     speed, about refusals, about a particular kind of question your corpus
-     handles badly, about source attribution being correct rather than merely
-     present — anything, as long as it names a number or an observable
-     outcome. -->
-
-
+Low-confidence questions should be rejected rather than answered with
+unsupported information, with questions below the chosen retrieval cutoff
+receiving the "I don't have enough information about that" response.
 
 **Why this target:**
-
-
+Because the system should avoid providing false or unsupported information
+when the corpus does not contain an answer.
 
 ---
 

@@ -214,27 +214,78 @@ splitting or duplicating the thread across multiple chunks.
 
 ## Run Log — Before
 
-<!-- Your five criteria, three runs each. `python run_eval.py --label before`
-     runs the questions, puts the OUT_OF_SCOPE ones through the gate, and
-     writes it all into results/ for you. Targets come from criteria.md; the
-     verdict column is your call.
-
-     Criterion 3 is measured in one deterministic pass rather than three, so
-     the same number goes in all three run columns. That's correct, not lazy.
-
-     Milestone 1. -->
+Produced by `python run_eval.py --label before`, run on 2026-09-23. Full
+transcript (every question, every run): `results/run_2026-09-23_2016_before.md`.
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Sampled chunks contain valid, understandable information | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. Low-confidence questions rejected at the retrieval cutoff | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
 
-<!-- Underneath, paste the REAL output for each criterion from one of your
-     runs — the actual text your system produced, not a description of it.
-     Name the file and function that produced it. -->
+Criteria 1 and 2 come from `scorer.py::judge` scoring the three real runs per
+question (caching off). Criteria 3 and 5 share the same evidence — the same
+five `OUT_OF_SCOPE` questions through `gate.py::check` — because both are
+really testing the same gate mechanism, just described two different ways;
+that's a single deterministic pass, so the same number goes in all three run
+columns. Criterion 4 comes from `app.py::cmd_chunks -n 5`, also a single
+deterministic sample, not three runs.
+
+### Real output
+
+**Criteria 1 & 2 — retrieval and sourcing**, from `store.py::search` and
+`generate.py::answer_from_chunks`, via `run_eval.py::run_once`:
+
+```
+Question: When do large employers typically recruit for summer internships?
+Best distance: 0.3019 (passed the gate)
+Sources retrieved: thread_clubs.txt, thread_first_gen.txt, thread_first_year_regret.txt, thread_internship_timing.txt, thread_professor_email.txt
+
+Large employers close applications for summer internships in October and November for the following summer (thread_internship_timing.txt).
+```
+
+```
+Question: What should students do when a group-project member stops contributing?
+Best distance: 0.3593 (passed the gate)
+Sources retrieved: thread_first_year_regret.txt, thread_group_project.txt, thread_late_work.txt, thread_office_hours_etiquette.txt, thread_roommate_conflict.txt
+
+Based on the provided documents, students should document things early so they have something written down if they need to go to the instructor (thread_group_project.txt). Additionally, students should raise the issue to instructors before the deadline rather than after, as instructors will most likely adjust individual grades beforehand (thread_group_project.txt). Finally, students should split the work into pieces that can be handed off so that one person's absence does not sink the entire project (thread_group_project.txt).
+```
+
+**Criteria 3 & 5 — the relevance gate on out-of-corpus questions**, from
+`gate.py::check`, via `run_eval.py::check_out_of_scope`, cutoff 0.6:
+
+| Out-of-scope question | Best distance | Gate |
+|---|---|---|
+| What is the capital of Mongolia? | 0.890 | refused |
+| How do I change the oil in a diesel engine? | 0.930 | refused |
+| Who won the 1994 World Cup? | 0.787 | refused |
+| What is the recommended dosage of ibuprofen for a headache? | 0.828 | refused |
+| How do I write a for loop in Rust? | 0.871 | refused |
+
+**Criterion 4 — sampled chunks**, from `chunker.py::split_documents`, via
+`app.py::cmd_chunks -n 5` (same 5-chunk sample as the Unit 1 Sample Chunks
+section above — the chunker hasn't changed):
+
+```
+Chunk 1  |  source: thread_bike_commute.txt#0  |  produced by: chunker.py::split_documents
+THREAD: Is a bike worth it for a 20 minute walk commute?
+
+--- reply 1 (14 votes) ---
+Yeah. Cuts an 18 minute walk to about 6. The thing nobody mentions is storage — covered bike parking exists at three buildings and is full by 9am at all three.
+--- reply 2 (9 votes) ---
+Counterpoint, I sold mine. Between November and March the paths are either icy or salted and salt destroys a drivetrain in one season.
+```
+
+```
+Chunk 5  |  source: thread_professor_email.txt#0  |  produced by: chunker.py::split_documents
+THREAD: Do professors actually answer email?
+
+--- reply 1 (21 votes) ---
+Varies enormously. General rule I've found: if the syllabus states a response window, it's honoured. If it doesn't, assume 48 hours and don't panic before then.
+```
 
 ## Verdicts
 

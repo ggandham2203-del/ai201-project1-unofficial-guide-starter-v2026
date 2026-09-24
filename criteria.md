@@ -66,6 +66,17 @@ Because the chunks are the information retrieved by the system, so they need
 to contain useful information that can support an answer rather than broken or
 meaningless text.
 
+> **Revised in unit 2:** At least 4 of the 5 sampled chunks are a complete
+> thread — a question followed by at least one reply — with no sentence cut
+> off mid-word at either end.
+>
+> **Why revised:** "Valid, understandable piece of information" has no fixed
+> test behind it — my Assignment 1 feedback flagged exactly this, since a
+> reader has to guess what I meant by "valid" and "understandable" and could
+> reasonably score the same five chunks differently than I did. The revised
+> version only asks whether a chunk starts and ends at a natural boundary,
+> which is something anyone can check directly against the chunk text without
+> reading my mind about what "understandable" means.
 
 ---
 

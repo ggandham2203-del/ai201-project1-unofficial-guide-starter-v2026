@@ -33,7 +33,12 @@ CHUNK_OVERLAP = 120     # characters shared between neighbouring chunks
 
 # ─── Retrieval (Milestone 4) ─────────────────────────────────────────────────
 
-TOP_K = 5               # how many chunks to pull back per question
+TOP_K = 2               # how many chunks to pull back per question
+# Unit 2 improvement: was 5. With a 23-chunk corpus, top-k=5 pulled back
+# almost a quarter of the whole corpus on every question, which made
+# criterion 1 easy to pass regardless of how precise retrieval actually was
+# (see README Diagnoses). Dropping to 2 tests whether retrieval still finds
+# the answer when it can't just cast a wide net.
 
 # The relevance gate. If the best chunk is further away than this, the system
 # refuses to answer instead of handing the model thin material.
